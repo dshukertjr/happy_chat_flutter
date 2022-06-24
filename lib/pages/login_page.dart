@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:happychat/pages/home_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -71,6 +72,9 @@ class _LoginPageState extends State<LoginPage> {
                   );
                   return;
                 }
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                    (route) => false);
               },
               child: const Text('Login'),
             ),

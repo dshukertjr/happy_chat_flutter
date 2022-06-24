@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:happychat/pages/home_page.dart';
+import 'package:happychat/pages/loader_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -20,9 +21,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.pink[100],
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.green[200],
+          )),
+      home: const LoaderPage(),
     );
   }
 }

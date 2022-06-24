@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:happychat/pages/home_page.dart';
+import 'package:happychat/pages/login_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -8,7 +10,7 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends SupabaseAuthState<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -71,10 +73,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 final email = _emailController.text;
                 final password = _passwordController.text;
                 final username = _usernameController.text;
-                final res = await Supabase.instance.client.auth
-                    .signUp(email, password, userMetadata: {
-                  'username': username,
-                });
+                final res = await Supabase.instance.client.auth.signUp(
+                    email, password,
+                    userMetadata: {
+                      'username': username,
+                    },
+                    options: AuthOptions(
+                        redirectTo: 'io.supabase.happychat://login-callback'));
                 final error = res.error;
                 if (error != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +93,16 @@ class _RegisterPageState extends State<RegisterPage> {
               },
               child: const Text('Register'),
             ),
+            const SizedBox(height: 12),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginPage(),
+                    ),
+                  );
+                },
+                child: const Text('I have an account')),
           ],
         ),
       ),
@@ -95,8 +110,37 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
+  void initState() {
+    startAuthObserver();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
+    stopAuthObserver();
     super.dispose();
+  }
+
+  @override
+  void onAuthenticated(Session session) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false);
+  }
+
+  @override
+  void onErrorAuthenticating(String message) {
+    // TODO: implement onErrorAuthenticating
+  }
+
+  @override
+  void onPasswordRecovery(Session session) {
+    // TODO: implement onPasswordRecovery
+  }
+
+  @override
+  void onUnauthenticated() {
+    // TODO: implement onUnauthenticated
   }
 }
